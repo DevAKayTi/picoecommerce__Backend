@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,26 +22,35 @@ class AuthController extends Controller
             ],Response::HTTP_UNAUTHORIZED);
         }
 
-        $user = Auth::user();
+        $auth = Auth::user()->id;
+        $user = User::find($auth);
         $token = $user->createToken('token')->plainTextToken;
         $cookie = cookie('jwt',$token,60);
 
         return response([
             'message'=>$token
         ])->withCookie($cookie);
-        }
+    }
 
     public function show(){
 
-        $user = Auth::user()->with('role')->first();
-        return response()->json($user);
+        $auth = Auth::user()->id;
+        $user = User::where('id',$auth)->with('role')->first();
+
+        $permission = Role::where('id',$user->role_id)->with('permission:id,feature_id')->first();
+        return response()->json([
+            'userInfo' => $user,
+            'permission'=> $permission
+        ]);
     }
 
     public function logout(){
 
         $cookie = Cookie::forget('jwt');
 
-        Auth::user()->tokens()->delete();
+        $auth = Auth::user()->id;
+        $user = User::find($auth);
+        $user->tokens()->delete();
 
         return response([
             'message' => 'Success'

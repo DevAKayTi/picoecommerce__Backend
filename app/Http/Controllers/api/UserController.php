@@ -53,7 +53,7 @@ class UserController extends Controller
             'role_id' =>$request->role,
             'phone'=>$request->phone,
             'email'=>$request->email,
-            'password'=>$request->password,
+            'password'=>Hash::make($request->password),
             'gender'=>$request->gender,
             'is_active'=>$request->isactive
         ]);
