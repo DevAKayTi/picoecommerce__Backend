@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
+
         $features = ['User','Role'];
 
         $permissions = ['create','update','read','Delete'];
@@ -69,6 +70,9 @@ class DatabaseSeeder extends Seeder
             'email' => $email,
             'gender' => $gender,
             'is_active' => $is_active
-        ]);    
+        ]);
+
+        $rolepermission = Role::find(1);
+        $rolepermission->permission()->sync([1,2,3,4,5,6,7,8]);
     }
 }
